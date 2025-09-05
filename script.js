@@ -12,41 +12,63 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Navbar background on scroll
+// Navbar scroll effect
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+    if (window.scrollY > 50) {
+        navbar.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
     } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
         navbar.style.boxShadow = 'none';
     }
 });
 
-// Animate elements on scroll
+// Animate progress bars when in view
 const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
+    threshold: 0.5,
+    rootMargin: '0px 0px -100px 0px'
 };
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
+            const progressBars = entry.target.querySelectorAll('.Polaris-ProgressBar__Indicator');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
         }
     });
 }, observerOptions);
 
-// Observe elements for animation
+// Observe skills section for progress bar animation
 document.addEventListener('DOMContentLoaded', () => {
-    const animateElements = document.querySelectorAll('.skill-category, .timeline-item, .stat');
+    const skillsSection = document.querySelector('#skills');
+    if (skillsSection) {
+        observer.observe(skillsSection);
+    }
     
-    animateElements.forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(el);
+    // Add click handlers for buttons
+    const buttons = document.querySelectorAll('.Polaris-Button');
+    buttons.forEach(button => {
+        if (button.textContent.includes("Let's Connect") || button.textContent.includes("Send Email")) {
+            button.addEventListener('click', (e) => {
+                if (!button.href) {
+                    e.preventDefault();
+                    window.location.href = 'mailto:ddivyanshu@gmail.com';
+                }
+            });
+        }
+        
+        if (button.textContent.includes("View Experience")) {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelector('#experience').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        }
     });
 });
